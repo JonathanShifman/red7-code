@@ -21,6 +21,21 @@
 }
 #table-wrapper {
   flex: 1;
+  display: flex;
+}
+#canvas-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+#palette-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 #hand-wrapper {
   height: 180px;

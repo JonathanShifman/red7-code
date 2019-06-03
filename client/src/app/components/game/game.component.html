@@ -10,8 +10,23 @@
   </div>
   <div id="action-wrapper">
     <div id="table-wrapper">
-      <div style="width: 120px; height: 160px;">
-        <app-card [card]="card"></app-card>
+      <div id="canvas-wrapper">
+        <div id="canvas-top-wrapper"></div>
+        <div id="canvas-middle-wrapper">
+          <div style="width: 120px; height: 160px;">
+            <app-card [card]="card"></app-card>
+          </div>
+        </div>
+        <div id="canvas-bottom-wrapper"></div>
+      </div>
+      <div id="palette-wrapper">
+        <div id="palette-top-wrapper"></div>
+        <div id="palette-middle-wrapper">
+          <div style="width: 120px; height: 160px;">
+            <app-card [card]="card"></app-card>
+          </div>
+        </div>
+        <div id="palette-bottom-wrapper"></div>
       </div>
     </div>
     <div id="hand-wrapper">
