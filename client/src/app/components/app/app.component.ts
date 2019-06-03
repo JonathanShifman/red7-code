@@ -7,7 +7,7 @@ import {Card} from "../../classes/card";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  card = new Card(1, 1);
+  card = new Card(0, 1);
 
   handCards: Card[] = [];
 

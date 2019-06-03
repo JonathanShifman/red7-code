@@ -1,3 +1,5 @@
 <div id="card-wrapper" [ngStyle]="{'background-color': getColor()}">
-  {{ card.value }}
+  <span *ngIf="card.value > 0">
+    {{ card.value }}
+  </span>
 </div>
