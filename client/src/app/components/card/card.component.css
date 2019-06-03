@@ -1,0 +1,12 @@
+#card-wrapper {
+  width: 100%;
+  height: 100%;
+  border: 4px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 100px;
+  font-weight: bold;
+  color: white;
+  /*transform: rotate(12deg);*/
+}
