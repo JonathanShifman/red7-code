@@ -8,7 +8,7 @@ import {Component, OnInit} from '@angular/core';
 export class AppComponent implements OnInit{
 
   isRegistered = true;
-  gameIsInProgress = false;
+  gameIsInProgress = true;
 
   ngOnInit() {
   }
