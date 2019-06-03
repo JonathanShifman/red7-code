@@ -9,8 +9,15 @@
     </div>
   </div>
   <div id="action-wrapper">
-    <div style="width: 120px; height: 160px;">
-      <app-card [card]="card"></app-card>
+    <div id="table-wrapper">
+      <div style="width: 120px; height: 160px;">
+        <app-card [card]="card"></app-card>
+      </div>
+    </div>
+    <div id="hand-wrapper">
+      <div *ngFor="let handCard of handCards" class="hand-card-wrapper">
+        <app-card [card]="handCard"></app-card>
+      </div>
     </div>
   </div>
 </div>
