@@ -1,3 +1,5 @@
 <div id="app-wrapper">
-  <app-game></app-game>
+  <app-registration *ngIf="!isRegistered && !gameIsInProgress"></app-registration>
+  <app-lobby *ngIf="isRegistered && !gameIsInProgress"></app-lobby>
+  <app-game *ngIf="gameIsInProgress"></app-game>
 </div>
