@@ -21,7 +21,8 @@
 }
 #table-wrapper {
   flex: 1;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 #canvas-wrapper {
   flex: 1;
@@ -30,12 +31,32 @@
   justify-content: space-between;
   align-items: center;
 }
-#palette-wrapper {
+.palette-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  /*align-items: center;*/
+}
+.palette-top-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 30px;
+  box-sizing: border-box;
+}
+.palette-middle-wrapper {
+  flex: 1;
+}
+.palette-bottom-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0;
+}
+.palette-card-wrapper {
+  width: 30px;
+  height: 40px;
 }
 #hand-wrapper {
   height: 180px;

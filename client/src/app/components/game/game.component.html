@@ -1,8 +1,13 @@
 <div id="game-wrapper">
   <div id="sidebar-wrapper">
-    <div id="opponents-wrapper">
-      <app-opponent name="Player 1" [numOfCards]="3"></app-opponent>
-      <app-opponent name="Player 2" [numOfCards]="6"></app-opponent>
+    <div id="canvas-wrapper">
+      <div id="canvas-top-wrapper"></div>
+      <div id="canvas-middle-wrapper">
+        <div style="width: 120px; height: 160px;">
+          <app-card [card]="card"></app-card>
+        </div>
+      </div>
+      <div id="canvas-bottom-wrapper"></div>
     </div>
     <div id="log-wrapper">
 
@@ -10,23 +15,19 @@
   </div>
   <div id="action-wrapper">
     <div id="table-wrapper">
-      <div id="canvas-wrapper">
-        <div id="canvas-top-wrapper"></div>
-        <div id="canvas-middle-wrapper">
-          <div style="width: 120px; height: 160px;">
+      <div *ngFor="let player of players" class="palette-wrapper">
+        <div class="palette-top-wrapper">
+          <div>Player 1</div>
+          <div>{{ player }}</div>
+        </div>
+        <div class="palette-middle-wrapper">
+          <div class="palette-card-wrapper">
             <app-card [card]="card"></app-card>
           </div>
         </div>
-        <div id="canvas-bottom-wrapper"></div>
-      </div>
-      <div id="palette-wrapper">
-        <div id="palette-top-wrapper"></div>
-        <div id="palette-middle-wrapper">
-          <div style="width: 120px; height: 160px;">
-            <app-card [card]="card"></app-card>
-          </div>
+        <div class="palette-bottom-wrapper">
+          ARROW
         </div>
-        <div id="palette-bottom-wrapper"></div>
       </div>
     </div>
     <div id="hand-wrapper">

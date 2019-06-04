@@ -11,6 +11,8 @@ export class GameComponent implements OnInit {
 
   handCards: Card[] = [];
 
+  players = [1, 2, 3, 4];
+
   constructor() { }
 
   ngOnInit() {
