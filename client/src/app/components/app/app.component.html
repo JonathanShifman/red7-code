@@ -1,5 +1,7 @@
 <div id="app-wrapper">
-  <app-registration *ngIf="!isRegistered && !gameIsInProgress"></app-registration>
+  <app-registration
+    *ngIf="!isRegistered && !gameIsInProgress"
+    (registrationComplete)="onRegistrationComplete($event)"></app-registration>
   <app-lobby *ngIf="isRegistered && !gameIsInProgress"></app-lobby>
   <app-game *ngIf="gameIsInProgress"></app-game>
 </div>

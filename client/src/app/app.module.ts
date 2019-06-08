@@ -7,6 +7,7 @@ import { CardComponent } from './components/card/card.component';
 import { GameComponent } from './components/game/game.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { LobbyComponent } from './components/lobby/lobby.component';
     LobbyComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

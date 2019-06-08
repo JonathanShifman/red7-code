@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-registration',
@@ -7,13 +8,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegistrationComponent implements OnInit {
 
-  constructor() { }
+  @Output() registrationComplete = new EventEmitter();
+
+  constructor(private httpClient: HttpClient) { }
 
   ngOnInit() {
   }
 
   submitRegistration(name: string) {
-    console.log(name);
+    if (name.length > 0) {
+      this.httpClient.post('http://localhost:5000/register/', {name: name})
+        .subscribe(response => this.handleRegistrationResponse(response),
+          error => this.handleRegistrationError(error));
+    }
+  }
+
+  handleRegistrationResponse(response) {
+    this.registrationComplete.emit(response);
+  }
+
+  handleRegistrationError(error) {
+    console.log(error);
   }
 
 }
