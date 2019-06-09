@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-lobby',
@@ -7,13 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LobbyComponent implements OnInit {
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) { }
 
   ngOnInit() {
   }
 
   startGame() {
-
+    console.log('Entering game');
+    const body = localStorage.getItem('red7');
+    this.httpClient.post('http://localhost:5000/enter-game/', JSON.parse(body))
+      .subscribe(response => console.log(response));
   }
 
 }
