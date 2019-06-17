@@ -2,10 +2,7 @@
   <div id="panel-wrapper">
     <h2>Players</h2>
     <div id="players-table">
-      <div class="player-name-wrapper separated">Player 1</div>
-      <div class="player-name-wrapper separated">Player 2</div>
-      <div class="player-name-wrapper separated">Player 3</div>
-      <div class="player-name-wrapper"></div>
+      <div *ngFor="let player of lobbyPlayers" class="player-name-wrapper separated">{{ player }}</div>
     </div>
     <div id="enter-game-button" (click)="startGame()">
       Enter Game

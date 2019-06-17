@@ -7,15 +7,17 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 
 const lobbyPlayers = [];
+const sockets = [];
 
 app.use(cors());
 app.use(bodyParser.json());
-app.get('/lobby-players/', (req, res) => res.json({}));
+app.get('/lobby-players/', (req, res) => res.json(lobbyPlayers));
 app.post('/register/', (req, res) => register(req, res));
 app.post('/enter-game/', (req, res) => enterGame(req, res));
 
 io.on('connection', function(socket){
     console.log('a user connected');
+    sockets.push(socket);
 
     socket.on('disconnect', function () {
         console.log('a user disconnected');
@@ -42,8 +44,12 @@ function register(req, res) {
 }
 
 function enterGame(req, res) {
-    console.log(jwt.decode(req.body.token));
-    res.json({});
+    const userInfo = jwt.decode(req.body.token);
+    lobbyPlayers.push(userInfo.name);
+    for (const socket of sockets) {
+        socket.emit('lobby-players', lobbyPlayers);
+    }
+    res.status(200);
 }
 
 function setReady(req, res) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
 @Component({
@@ -8,9 +8,16 @@ import {HttpClient} from "@angular/common/http";
 })
 export class LobbyComponent implements OnInit {
 
+  @Input() socket;
+  lobbyPlayers = [];
+
   constructor(private httpClient: HttpClient) { }
 
   ngOnInit() {
+    this.httpClient.get('http://localhost:5000/lobby-players/')
+      .subscribe(response => this.updateLobbyPlayers(response));
+
+    this.socket.on('lobby-players', lobbyPlayers => this.updateLobbyPlayers(lobbyPlayers));
   }
 
   startGame() {
@@ -18,6 +25,13 @@ export class LobbyComponent implements OnInit {
     const body = localStorage.getItem('red7');
     this.httpClient.post('http://localhost:5000/enter-game/', JSON.parse(body))
       .subscribe(response => console.log(response));
+  }
+
+  updateLobbyPlayers(response) {
+    this.lobbyPlayers = response;
+    while (this.lobbyPlayers.length < 4) {
+      this.lobbyPlayers.push('');
+    }
   }
 
 }
