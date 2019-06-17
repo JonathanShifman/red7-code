@@ -1,18 +1,33 @@
 const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
-const app = express();
 
-const players = [];
+const lobbyPlayers = [];
 
 app.use(cors());
 app.use(bodyParser.json());
+app.get('/lobby-players/', (req, res) => res.json({}));
 app.post('/register/', (req, res) => register(req, res));
 app.post('/enter-game/', (req, res) => enterGame(req, res));
 
+io.on('connection', function(socket){
+    console.log('a user connected');
+
+    socket.on('disconnect', function () {
+        console.log('a user disconnected');
+    });
+
+    socket.on('auth',  storageData => {
+        console.log(storageData);
+    });
+});
+
 const port = 5000;
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+http.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 function register(req, res) {
     const object = {

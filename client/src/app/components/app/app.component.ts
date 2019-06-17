@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import * as io from 'socket.io-client';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,10 @@ export class AppComponent implements OnInit{
   gameIsInProgress = false;
 
   ngOnInit() {
-    this.isRegistered = localStorage.getItem('red7') != null;
+    const storageData = localStorage.getItem('red7');
+    this.isRegistered = storageData != null;
+    const socket = io('http://localhost:5000');
+    socket.emit('auth', storageData)
   }
 
   onRegistrationComplete(response: any) {
