@@ -4,11 +4,16 @@
     <div id="players-table">
       <div *ngFor="let player of lobbyPlayers" class="player-name-wrapper separated">{{ player.name }}</div>
     </div>
-    <div id="enter-game-button" (click)="startGame()">
-      Enter Game
-    </div>
-    <div id="start-game-button" (click)="startGame()">
-      Start Game
+    <div id="buttons-wrapper">
+      <div class="button" (click)="startGame()">
+        Enter Game
+      </div>
+      <div class="button">
+        Ready
+      </div>
+      <div class="button">
+        Start Game
+      </div>
     </div>
   </div>
 </div>

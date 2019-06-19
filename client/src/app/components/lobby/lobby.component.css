@@ -11,7 +11,7 @@
   align-items: center;
 }
 #players-table {
-  width: 330px;
+  width: 450px;
   display: flex;
   flex-direction: column;
   border: 1px solid white;
@@ -28,8 +28,13 @@
 .separated {
   border-bottom: 1px solid lightgray;
 }
-#start-game-button {
-  margin-top: 40px;
+#buttons-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 28px;
+}
+.button {
+  margin: 0 8px;
   padding: 8px 16px;
   border: 1px solid white;
   border-radius: 3px;

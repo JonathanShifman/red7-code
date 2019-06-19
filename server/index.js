@@ -49,7 +49,8 @@ function register(req, res) {
     fs.writeFile('data.json', JSON.stringify(diskData), () => {});
 
     const responseObject = {
-        name: req.body.name,
+        id: object.id,
+        name: object.name,
         token: jwt.sign(object, 'secretkey')
     };
     res.json(responseObject);
