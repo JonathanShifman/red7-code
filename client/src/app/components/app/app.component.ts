@@ -12,13 +12,19 @@ export class AppComponent implements OnInit {
   gameIsInProgress = false;
 
   ngOnInit() {
-    const storageDataString = localStorage.getItem('red7');
-    this.storageData = JSON.parse(storageDataString);
-    this.isRegistered = storageDataString != null;
+    this.getStorageData();
+    console.log(this.storageData);
+    this.isRegistered = this.storageData != null;
   }
 
   onRegistrationComplete(response: any) {
     localStorage.setItem('red7', JSON.stringify(response));
+    this.getStorageData();
     this.isRegistered = true;
+  }
+
+  getStorageData() {
+    const storageDataString = localStorage.getItem('red7');
+    this.storageData = JSON.parse(storageDataString);
   }
 }

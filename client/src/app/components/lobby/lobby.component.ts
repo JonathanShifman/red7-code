@@ -12,10 +12,13 @@ export class LobbyComponent implements OnInit {
   socket;
   @Input() storageData;
   lobbyPlayers = [];
+  lobbyPlayerNames = [];
 
   constructor(private httpClient: HttpClient) { }
 
   ngOnInit() {
+    this.updatePlayerNames()
+
     this.httpClient.get('http://localhost:5000/lobby-players/')
       .subscribe(response => this.updateLobbyPlayers(response));
 
@@ -32,10 +35,14 @@ export class LobbyComponent implements OnInit {
   }
 
   updateLobbyPlayers(response) {
-    console.log('a');
     this.lobbyPlayers = response;
-    while (this.lobbyPlayers.length < 4) {
-      this.lobbyPlayers.push('');
+    this.updatePlayerNames()
+  }
+
+  updatePlayerNames() {
+    this.lobbyPlayerNames = this.lobbyPlayers.map(player => player.name);
+    while (this.lobbyPlayerNames.length < 4) {
+      this.lobbyPlayerNames.push('');
     }
   }
 

@@ -7,6 +7,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const secretKey = 'secretkey';
 
 const lobbyPlayers = [];
 const sockets = [];
@@ -52,7 +53,7 @@ function register(req, res) {
     const responseObject = {
         id: object.id,
         name: object.name,
-        token: jwt.sign(object, 'secretkey')
+        token: jwt.sign(object, secretKey)
     };
     res.json(responseObject);
 }
@@ -113,7 +114,7 @@ function setReady(req, res) {
     };
     const responseObject = {
         name: req.body.name,
-        token: jwt.sign(object, 'secretkey')
+        token: jwt.sign(object, secretKey)
     };
     res.json(responseObject);
 }
