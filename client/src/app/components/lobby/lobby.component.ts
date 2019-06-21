@@ -31,7 +31,7 @@ export class LobbyComponent implements OnInit {
     const body = localStorage.getItem('red7');
     console.log('Sending change lobby status request');
     this.httpClient.post('http://localhost:5000/' + requestUrlTail + '/', JSON.parse(body))
-      .subscribe(response => console.log(response));
+      .subscribe(() => {});
   }
 
   updateLobbyPlayers(response) {
@@ -55,8 +55,8 @@ export class LobbyComponent implements OnInit {
       if (lobbyPlayer.id === this.storageData.id) {
         return true;
       }
-      return false;
     }
+    return false;
   }
 
 }

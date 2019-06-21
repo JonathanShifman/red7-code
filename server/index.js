@@ -24,11 +24,11 @@ app.post('/enter-game/', (req, res) => enterGame(req, res));
 app.post('/leave-game/', (req, res) => leaveGame(req, res));
 
 io.on('connection', function(socket){
-    console.log('a user connected');
+    console.log('A user connected');
     sockets.push(socket);
 
     socket.on('disconnect', function () {
-        console.log('a user disconnected');
+        console.log('A user disconnected');
     });
 
     socket.on('auth',  storageData => {
