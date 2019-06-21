@@ -2,6 +2,6 @@
   <app-registration
     *ngIf="!isRegistered && !gameIsInProgress"
     (registrationComplete)="onRegistrationComplete($event)"></app-registration>
-  <app-lobby *ngIf="isRegistered && !gameIsInProgress" [socket]="socket"></app-lobby>
+  <app-lobby *ngIf="isRegistered && !gameIsInProgress" [storageData]="storageData"></app-lobby>
   <app-game *ngIf="gameIsInProgress"></app-game>
 </div>

@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 app.get('/lobby-players/', (req, res) => res.json(lobbyPlayers));
 app.post('/register/', (req, res) => register(req, res));
 app.post('/enter-game/', (req, res) => enterGame(req, res));
+app.post('/leave-game/', (req, res) => leaveGame(req, res));
 
 io.on('connection', function(socket){
     console.log('a user connected');
@@ -57,26 +58,52 @@ function register(req, res) {
 }
 
 function enterGame(req, res) {
+    console.log("Got enter game message");
     const userInfo = jwt.decode(req.body.token);
     console.log('Attempting to add lobby player');
 
     if (lobbyPlayers.length >= 4) {
         console.log('Lobby is full');
-        res.status(200);
-        return;
-    }
-    for (let lobbyPlayer of lobbyPlayers) {
-        if (lobbyPlayer.id === userInfo.id) {
-            console.log('The player is already in the lobby');
-            res.status(200);
-            return;
+    } else {
+        let shouldAddPlayer = true;
+        for (let lobbyPlayer of lobbyPlayers) {
+            if (lobbyPlayer.id === userInfo.id) {
+                console.log('The player is already in the lobby');
+                shouldAddPlayer = false;
+                break;
+            }
+        }
+        if (shouldAddPlayer) {
+            lobbyPlayers.push(userInfo);
+            for (const socket of sockets) {
+                socket.emit('lobby-players', lobbyPlayers);
+            }
         }
     }
-    lobbyPlayers.push(userInfo);
-    for (const socket of sockets) {
-        socket.emit('lobby-players', lobbyPlayers);
+    res.json({});
+}
+
+function leaveGame(req, res) {
+    const userInfo = jwt.decode(req.body.token);
+    console.log('Attempting to remove lobby player');
+
+    let playerToRemoveIndex = -1;
+    for (let index = 0; index < lobbyPlayers.length; index++) {
+        const lobbyPlayer = lobbyPlayers[index];
+        if (lobbyPlayer.id === userInfo.id) {
+            playerToRemoveIndex = index;
+        }
     }
-    res.status(200);
+    if (playerToRemoveIndex >= 0) {
+        console.log('Removing player');
+        lobbyPlayers.splice(playerToRemoveIndex, 1)
+        for (const socket of sockets) {
+            socket.emit('lobby-players', lobbyPlayers);
+        }
+    } else {
+        console.log('Player not found');
+    }
+    res.json({});
 }
 
 function setReady(req, res) {

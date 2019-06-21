@@ -5,8 +5,8 @@
       <div *ngFor="let player of lobbyPlayers" class="player-name-wrapper separated">{{ player.name }}</div>
     </div>
     <div id="buttons-wrapper">
-      <div class="button" (click)="startGame()">
-        Enter Game
+      <div class="button" (click)="changeLobbyStatus()">
+        {{ getGameEntranceButtonText() }}
       </div>
       <div class="button">
         Ready

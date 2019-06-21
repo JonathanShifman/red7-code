@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import * as io from 'socket.io-client';
 
 @Component({
   selector: 'app-root',
@@ -8,15 +7,14 @@ import * as io from 'socket.io-client';
 })
 export class AppComponent implements OnInit {
 
-  socket;
+  storageData;
   isRegistered = false;
   gameIsInProgress = false;
 
   ngOnInit() {
-    const storageData = localStorage.getItem('red7');
-    this.isRegistered = storageData != null;
-    this.socket = io('http://localhost:5000');
-    this.socket.emit('auth', storageData);
+    const storageDataString = localStorage.getItem('red7');
+    this.storageData = JSON.parse(storageDataString);
+    this.isRegistered = storageDataString != null;
   }
 
   onRegistrationComplete(response: any) {
