@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const secretKey = 'secretkey';
 
-const lobbyPlayers = [];
+const roomPlayers = [];
 const sockets = [];
 let diskData;
 fs.readFile('data.json', (err, data) => {
@@ -18,7 +18,7 @@ fs.readFile('data.json', (err, data) => {
 
 app.use(cors());
 app.use(bodyParser.json());
-app.get('/lobby-players/', (req, res) => res.json(lobbyPlayers));
+app.get('/room-players/', (req, res) => res.json(roomPlayers));
 app.post('/register/', (req, res) => register(req, res));
 app.post('/enter-game/', (req, res) => enterGame(req, res));
 app.post('/leave-game/', (req, res) => leaveGame(req, res));
@@ -35,7 +35,7 @@ io.on('connection', function(socket){
         // console.log(storageData);
     });
 
-    socket.emit('lobby-players', lobbyPlayers);
+    socket.emit('room-players', roomPlayers);
 });
 
 const port = 5000;
@@ -61,23 +61,23 @@ function register(req, res) {
 function enterGame(req, res) {
     console.log("Got enter game message");
     const userInfo = jwt.decode(req.body.token);
-    console.log('Attempting to add lobby player');
+    console.log('Attempting to add room player');
 
-    if (lobbyPlayers.length >= 4) {
-        console.log('Lobby is full');
+    if (roomPlayers.length >= 4) {
+        console.log('Room is full');
     } else {
         let shouldAddPlayer = true;
-        for (let lobbyPlayer of lobbyPlayers) {
-            if (lobbyPlayer.id === userInfo.id) {
-                console.log('The player is already in the lobby');
+        for (let roomPlayer of roomPlayers) {
+            if (roomPlayer.id === userInfo.id) {
+                console.log('The player is already in the room');
                 shouldAddPlayer = false;
                 break;
             }
         }
         if (shouldAddPlayer) {
-            lobbyPlayers.push(userInfo);
+            roomPlayers.push(userInfo);
             for (const socket of sockets) {
-                socket.emit('lobby-players', lobbyPlayers);
+                socket.emit('room-players', roomPlayers);
             }
         }
     }
@@ -86,20 +86,20 @@ function enterGame(req, res) {
 
 function leaveGame(req, res) {
     const userInfo = jwt.decode(req.body.token);
-    console.log('Attempting to remove lobby player');
+    console.log('Attempting to remove room player');
 
     let playerToRemoveIndex = -1;
-    for (let index = 0; index < lobbyPlayers.length; index++) {
-        const lobbyPlayer = lobbyPlayers[index];
-        if (lobbyPlayer.id === userInfo.id) {
+    for (let index = 0; index < roomPlayers.length; index++) {
+        const roomPlayer = roomPlayers[index];
+        if (roomPlayer.id === userInfo.id) {
             playerToRemoveIndex = index;
         }
     }
     if (playerToRemoveIndex >= 0) {
         console.log('Removing player');
-        lobbyPlayers.splice(playerToRemoveIndex, 1)
+        roomPlayers.splice(playerToRemoveIndex, 1)
         for (const socket of sockets) {
-            socket.emit('lobby-players', lobbyPlayers);
+            socket.emit('room-players', roomPlayers);
         }
     } else {
         console.log('Player not found');

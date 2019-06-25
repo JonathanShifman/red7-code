@@ -2,10 +2,10 @@
   <div id="panel-wrapper">
     <h2>Players</h2>
     <div id="players-table">
-      <div *ngFor="let playerName of lobbyPlayerNames" class="player-name-wrapper separated">{{ playerName }}</div>
+      <div *ngFor="let playerName of roomPlayerNames" class="player-name-wrapper separated">{{ playerName }}</div>
     </div>
     <div id="buttons-wrapper">
-      <div class="button" (click)="changeLobbyStatus()">
+      <div class="button" (click)="changeRoomStatus()">
         {{ getGameEntranceButtonText() }}
       </div>
       <div class="button">
