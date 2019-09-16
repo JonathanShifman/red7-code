@@ -8,6 +8,7 @@ import { GameComponent } from './components/game/game.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RoomComponent } from './components/room/room.component';
 import {HttpClientModule} from "@angular/common/http";
+import { LobbyComponent } from './components/lobby/lobby.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import {HttpClientModule} from "@angular/common/http";
     CardComponent,
     GameComponent,
     RegistrationComponent,
-    RoomComponent
+    RoomComponent,
+    LobbyComponent
   ],
   imports: [
     BrowserModule,

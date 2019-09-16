@@ -13,7 +13,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.getStorageData();
-    console.log(this.storageData);
     this.isRegistered = this.storageData != null;
   }
 

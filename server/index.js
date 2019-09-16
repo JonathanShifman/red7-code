@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const secretKey = 'secretkey';
 
+const rooms = [];
 const roomPlayers = [];
 const sockets = [];
 let diskData;
@@ -18,6 +19,7 @@ fs.readFile('data.json', (err, data) => {
 
 app.use(cors());
 app.use(bodyParser.json());
+app.get('/roomIds/', (req, res) => getRoomIds(req, res));
 app.get('/room-players/', (req, res) => res.json(roomPlayers));
 app.post('/register/', (req, res) => register(req, res));
 app.post('/enter-game/', (req, res) => enterGame(req, res));
@@ -40,6 +42,18 @@ io.on('connection', function(socket){
 
 const port = 5000;
 http.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+function getRoomIds(req, res) {
+    const roomIds = [];
+    let roomIndex = 0;
+    while (roomIndex < rooms.length) {
+        if (rooms[roomIndex] != null) {
+            roomIds.push(roomIndex + 1);
+        }
+        roomIndex++;
+    }
+    res.json({'roomIds': roomIds});
+}
 
 function register(req, res) {
     const object = {
