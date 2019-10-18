@@ -34,23 +34,6 @@ for (let game of games) {
     }
 }
 
-const rooms = [
-    {
-        'id': 1,
-        'taken': 3,
-        'capacity': 4
-    },
-    {
-        'id': 2,
-        'taken': 4,
-        'capacity': 4
-    },
-    {
-        'id': 3,
-        'taken': 1,
-        'capacity': 4
-    }
-];
 const roomPlayers = [];
 const sockets = [];
 let diskData;
@@ -64,11 +47,10 @@ app.get('/roomIds/', (req, res) => getRoomIds(req, res));
 app.post('/status/', (req, res) => getStatus(req, res));
 app.post('/login/', (req, res) => login(req, res));
 app.post('/register/', (req, res) => register(req, res));
-app.get('/room-players/', (req, res) => res.json(roomPlayers));
 app.post('/enter-room/', (req, res) => enterRoom(req, res));
+app.post('/exit-room/', (req, res) => exitRoom(req, res));
 app.post('/enter-lobby/', (req, res) => enterGame(req, res));
 app.post('/leave-lobby/', (req, res) => leaveGame(req, res));
-app.get('/rooms/', (req, res) => getRooms(req, res));
 
 io.on('connection', function(socket){
     console.log('A user connected');
@@ -115,18 +97,6 @@ function generateStatus(userInfo) {
         }
     }
     return status;
-}
-
-function getRoomIds(req, res) {
-    const roomIds = [];
-    let roomIndex = 0;
-    while (roomIndex < rooms.length) {
-        if (rooms[roomIndex] != null) {
-            roomIds.push(roomIndex + 1);
-        }
-        roomIndex++;
-    }
-    res.json({'roomIds': roomIds});
 }
 
 function login(req, res) {
@@ -221,6 +191,26 @@ function enterRoom(req, res) {
 }
 
 
+function exitRoom(req, res) {
+    console.log("Got exit room message");
+    const userInfo = jwt.decode(req.body.token);
+    if (userInfo == null) {
+        console.log('Unauthorized');
+    } else {
+        let userId = userInfo.id.toString();
+        if (userMap[userId] == null) {
+            console.log("User not in map");
+        } else {
+            userMap[userId] = null;
+            // TODO: Edit gameMap if necessary
+        }
+    }
+
+    let status = generateStatus(userInfo);
+    res.json(status);
+}
+
+
 function enterGame(req, res) {
     console.log("Got enter lobby message");
     const userInfo = jwt.decode(req.body.token);
@@ -268,20 +258,4 @@ function leaveGame(req, res) {
         console.log('Player not found');
     }
     res.json({});
-}
-
-function setReady(req, res) {
-    const object = {
-        id: 1,
-        name: req.body.name
-    };
-    const responseObject = {
-        name: req.body.name,
-        token: jwt.sign(object, secretKey)
-    };
-    res.json(responseObject);
-}
-
-function getRooms(req, res) {
-    res.json(rooms);
 }

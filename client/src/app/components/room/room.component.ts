@@ -21,8 +21,8 @@ export class RoomComponent implements OnInit {
   ngOnInit() {
     this.updatePlayerNames();
 
-    this.httpClient.get('http://localhost:5000/room-players/')
-      .subscribe(response => this.updateRoomPlayers(response));
+    // this.httpClient.get('http://localhost:5000/room-players/')
+    //   .subscribe(response => this.updateRoomPlayers(response));
 
     this.socket = io('http://localhost:5000');
     console.log(this.socket);

@@ -56,13 +56,13 @@ export class AppComponent implements OnInit {
       gameId: roomInfo.gameId,
       roomId: roomInfo.roomId
     };
-    console.log(data);
     this.httpClient.post('http://localhost:5000/enter-room/', data)
       .subscribe(response => this.receiveStatus(response));
   }
 
   onBackClick() {
-    this.room = null;
+    this.httpClient.post('http://localhost:5000/exit-room/', this.storageData)
+      .subscribe(response => this.receiveStatus(response));
   }
 
   signOutClicked() {
