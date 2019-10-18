@@ -50,8 +50,15 @@ export class AppComponent implements OnInit {
     this.storageData = JSON.parse(storageDataString);
   }
 
-  roomChosen(index) {
-    this.room = index;
+  roomChosen(roomInfo) {
+    let data = {
+      token: this.storageData.token,
+      gameId: roomInfo.gameId,
+      roomId: roomInfo.roomId
+    };
+    console.log(data);
+    this.httpClient.post('http://localhost:5000/enter-room/', data)
+      .subscribe(response => this.receiveStatus(response));
   }
 
   onBackClick() {

@@ -8,10 +8,11 @@ import {HttpClient} from "@angular/common/http";
 })
 export class LobbyComponent implements OnInit {
 
+  @Input() gameId;
   @Input() rooms;
   @Output() roomChosen = new EventEmitter();
 
-  constructor(private httpClient: HttpClient) { }
+  constructor() { }
 
   ngOnInit() {
   }
@@ -20,8 +21,12 @@ export class LobbyComponent implements OnInit {
     return this.rooms[index]['taken'] >= this.rooms[index]['capacity'];
   }
 
-  roomClicked(index) {
-    this.roomChosen.emit(index);
+  roomClicked(roomId) {
+    let roomInfo = {
+      gameId: this.gameId,
+      roomId: roomId
+    };
+    this.roomChosen.emit(roomInfo);
   }
 
 }

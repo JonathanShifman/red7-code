@@ -65,6 +65,7 @@ app.post('/status/', (req, res) => getStatus(req, res));
 app.post('/login/', (req, res) => login(req, res));
 app.post('/register/', (req, res) => register(req, res));
 app.get('/room-players/', (req, res) => res.json(roomPlayers));
+app.post('/enter-room/', (req, res) => enterRoom(req, res));
 app.post('/enter-lobby/', (req, res) => enterGame(req, res));
 app.post('/leave-lobby/', (req, res) => leaveGame(req, res));
 app.get('/rooms/', (req, res) => getRooms(req, res));
@@ -89,18 +90,31 @@ http.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 function getStatus(req, res) {
     let userInfo = jwt.decode(req.body.token);
-    let response;
+    let status = generateStatus(userInfo);
+    res.json(status);
+}
+
+function generateStatus(userInfo) {
+    let status;
     if (userInfo == null) {
-        response = {
+        status = {
             'status': 0
         };
     } else {
-        response = {
-            'status': 1,
-            'games': gameMap
-        };
+        let userId = userInfo.id.toString();
+        if (userMap[userId] == null) {
+            status = {
+                'status': 1,
+                'games': gameMap
+            };
+        } else {
+            status = {
+                'status': 2,
+                'roomInfo': userMap[userId]
+            };
+        }
     }
-    res.json(response);
+    return status;
 }
 
 function getRoomIds(req, res) {
@@ -180,6 +194,30 @@ function register(req, res) {
             });
         }
     });
+}
+
+
+function enterRoom(req, res) {
+    console.log("Got enter room message");
+    const userInfo = jwt.decode(req.body.token);
+    if (userInfo == null) {
+        console.log('Unauthorized');
+    } else {
+        let gameId = req.body.gameId;
+        let roomId = req.body.roomId;
+        let userId = userInfo.id.toString();
+        if (userMap[userId] != null) {
+            console.log("User already in map");
+        } else {
+            userMap[userId] = {
+                gameId: gameId,
+                roomId: roomId
+            };
+        }
+    }
+
+    let status = generateStatus(userInfo);
+    res.json(status);
 }
 
 
