@@ -1,7 +1,12 @@
 <div id="app-wrapper">
-  <app-registration
-    *ngIf="!isRegistered && !gameIsInProgress"
-    (registrationComplete)="onRegistrationComplete($event)"></app-registration>
-  <app-room *ngIf="isRegistered && !gameIsInProgress" [storageData]="storageData"></app-room>
-  <app-game *ngIf="gameIsInProgress"></app-game>
+  <app-entrance
+    *ngIf="status === 0"
+    (successfulEntrance)="onRegistrationComplete()"></app-entrance>
+  <div id="wrapper-with-header">
+    <app-header *ngIf="status > 0" (signOut)="signOutClicked()"></app-header>
+    <app-choose-lobby class="expand" *ngIf="status == 1 && chosenLobby <= 0" [lobbies]="lobbiesList" (lobbySelected)="onLobbySelected($event)"></app-choose-lobby>
+    <app-lobby class="expand" *ngIf="status === 1 && chosenLobby > 0" [rooms]="rooms" (roomChosen)="roomChosen($event)"></app-lobby>
+    <app-room class="expand" *ngIf="status === 2" [storageData]="storageData" (backClick)="onBackClick()"></app-room>
+    <app-game class="expand" *ngIf="status === 3"></app-game>
+  </div>
 </div>

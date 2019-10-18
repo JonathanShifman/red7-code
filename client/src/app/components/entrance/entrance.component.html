@@ -1,0 +1,38 @@
+<div id="entrance-wrapper">
+  <div id="content-wrapper">
+    <div id="top-menu">
+      <div class="top-menu-option" (click)="selectMenuItem(0)" [ngClass]="{'selected-menu-option': selectedMenuItem === 0}">Login</div>
+      <div class="top-menu-option" (click)="selectMenuItem(1)" [ngClass]="{'selected-menu-option': selectedMenuItem === 1}">Register</div>
+    </div>
+    <div class="panel-wrapper" *ngIf="selectedMenuItem === 0">
+      <h2>Login</h2>
+      <div class="input-wrapper">
+        Name
+        <input type="text" [(ngModel)]="loginName">
+      </div>
+      <div class="input-wrapper">
+        Password
+        <input type="password" [(ngModel)]="loginPassword">
+      </div>
+      <app-message [width]="messageWidth" [message]="loginMessage" (close)="clearLoginMessage()"></app-message>
+      <div class="submit-button" (click)="submitLogin()">
+        Go
+      </div>
+    </div>
+    <div class="panel-wrapper" *ngIf="selectedMenuItem === 1">
+      <h2>Register</h2>
+      <div class="input-wrapper">
+        Name
+        <input type="text" [(ngModel)]="registrationName">
+      </div>
+      <div class="input-wrapper">
+        Password
+        <input type="password" [(ngModel)]="registrationPassword">
+      </div>
+      <app-message [width]="messageWidth" [message]="registerMessage" (close)="clearRegisterMessage()"></app-message>
+      <div class="submit-button" (click)="submitRegistration()">
+        Go
+      </div>
+    </div>
+  </div>
+</div>

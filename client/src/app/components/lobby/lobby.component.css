@@ -1,0 +1,42 @@
+#lobby-wrapper {
+  width: 100%;
+  padding: 70px 100px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+#rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 3em;
+  align-content: stretch;
+  max-width: 1600px;
+  flex-grow: 1;
+}
+.room {
+  height: 80px;
+  border: 2px solid white;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.room:hover {
+  border-width: 4px;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.room-header {
+  margin-bottom: 16px;
+  font-weight: bold;
+  font-size: 20px;
+}
+.room-footer {
+  font-size: 18px;
+}
+.room-full {
+  border-color: indianred;
+  color: indianred;
+}

@@ -1,3 +1,8 @@
-<p>
-  lobby works!
-</p>
+<div id="lobby-wrapper">
+  <div id="rooms-grid">
+    <div class="room" *ngFor="let room of rooms; index as i" [ngClass]="{'room-full': isRoomTaken(i)}" (click)="roomClicked(i)">
+      <div class="room-header">Room {{ room['id'] }}</div>
+      <div class="room-footer">{{ room['taken'] + '/' + room['capacity']}}</div>
+    </div>
+  </div>
+</div>

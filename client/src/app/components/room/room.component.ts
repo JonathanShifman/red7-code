@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import * as io from 'socket.io-client';
 
@@ -14,6 +14,8 @@ export class RoomComponent implements OnInit {
   roomPlayers = [];
   roomPlayerNames = [];
 
+  @Output() backClick = new EventEmitter();
+
   constructor(private httpClient: HttpClient) { }
 
   ngOnInit() {
@@ -23,12 +25,14 @@ export class RoomComponent implements OnInit {
       .subscribe(response => this.updateRoomPlayers(response));
 
     this.socket = io('http://localhost:5000');
+    console.log(this.socket);
     this.socket.on('room-players', roomPlayers => this.updateRoomPlayers(roomPlayers));
   }
 
   changeRoomStatus() {
-    const requestUrlTail = this.hasEnteredGame() ? 'leave-game' : 'enter-game';
+    const requestUrlTail = this.hasEnteredGame() ? 'leave-lobby' : 'enter-lobby';
     const body = localStorage.getItem('red7');
+    console.log(body);
     console.log('Sending change room status request');
     this.httpClient.post('http://localhost:5000/' + requestUrlTail + '/', JSON.parse(body))
       .subscribe(() => {});
@@ -36,7 +40,7 @@ export class RoomComponent implements OnInit {
 
   updateRoomPlayers(response) {
     this.roomPlayers = response;
-    this.updatePlayerNames()
+    this.updatePlayerNames();
   }
 
   updatePlayerNames() {
@@ -59,4 +63,7 @@ export class RoomComponent implements OnInit {
     return false;
   }
 
+  onBackClick() {
+    this.backClick.emit();
+  }
 }

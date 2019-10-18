@@ -1,0 +1,15 @@
+#lobbies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 2em;
+}
+.lobby-wrapper {
+  width: 240px;
+  height: 160px;
+  border: 2px solid white;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

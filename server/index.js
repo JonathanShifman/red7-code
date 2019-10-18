@@ -9,7 +9,48 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const secretKey = 'secretkey';
 
-const rooms = [];
+const games = [
+    {
+        id: '1',
+        name: 'Chess'
+    }
+];
+
+const userMap = {};
+const gameMap = {};
+const numOfRooms = 10;
+for (let game of games) {
+    gameMap[game.id] = {
+        id: game.id,
+        name: game.name,
+        rooms: []
+    };
+    for (let i = 1; i <= numOfRooms; i++) {
+        gameMap[game.id].rooms.push({
+            'id': i,
+            'taken': 0,
+            'capacity': 2
+        });
+    }
+}
+
+const rooms = [
+    {
+        'id': 1,
+        'taken': 3,
+        'capacity': 4
+    },
+    {
+        'id': 2,
+        'taken': 4,
+        'capacity': 4
+    },
+    {
+        'id': 3,
+        'taken': 1,
+        'capacity': 4
+    }
+];
 const roomPlayers = [];
 const sockets = [];
 let diskData;
@@ -20,10 +61,13 @@ fs.readFile('data.json', (err, data) => {
 app.use(cors());
 app.use(bodyParser.json());
 app.get('/roomIds/', (req, res) => getRoomIds(req, res));
-app.get('/room-players/', (req, res) => res.json(roomPlayers));
+app.post('/status/', (req, res) => getStatus(req, res));
+app.post('/login/', (req, res) => login(req, res));
 app.post('/register/', (req, res) => register(req, res));
-app.post('/enter-game/', (req, res) => enterGame(req, res));
-app.post('/leave-game/', (req, res) => leaveGame(req, res));
+app.get('/room-players/', (req, res) => res.json(roomPlayers));
+app.post('/enter-lobby/', (req, res) => enterGame(req, res));
+app.post('/leave-lobby/', (req, res) => leaveGame(req, res));
+app.get('/rooms/', (req, res) => getRooms(req, res));
 
 io.on('connection', function(socket){
     console.log('A user connected');
@@ -43,6 +87,22 @@ io.on('connection', function(socket){
 const port = 5000;
 http.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
+function getStatus(req, res) {
+    let userInfo = jwt.decode(req.body.token);
+    let response;
+    if (userInfo == null) {
+        response = {
+            'status': 0
+        };
+    } else {
+        response = {
+            'status': 1,
+            'games': gameMap
+        };
+    }
+    res.json(response);
+}
+
 function getRoomIds(req, res) {
     const roomIds = [];
     let roomIndex = 0;
@@ -55,25 +115,76 @@ function getRoomIds(req, res) {
     res.json({'roomIds': roomIds});
 }
 
-function register(req, res) {
-    const object = {
-        id: diskData['nextId'],
-        name: req.body.name
-    };
-
-    diskData['nextId'] = diskData['nextId'] + 1;
-    fs.writeFile('data.json', JSON.stringify(diskData), () => {});
-
-    const responseObject = {
-        id: object.id,
-        name: object.name,
-        token: jwt.sign(object, secretKey)
-    };
-    res.json(responseObject);
+function login(req, res) {
+    fs.readFile('users.json', (err, data) => {
+        let users = JSON.parse(data);
+        let token = null;
+        for (let user of users) {
+            if (user.name === req.body.name && user.password === req.body.password) {
+                let userObject = {id: user.id};
+                token = jwt.sign(userObject, secretKey);
+                break;
+            }
+        }
+        if (token != null) {
+            res.json({
+                success: true,
+                token: token
+            });
+        }
+        else {
+            res.json({
+                success: false,
+                message: 'Unregistered user'
+            });
+        }
+    });
 }
 
+function register(req, res) {
+    fs.readFile('users.json', (err, data) => {
+        let users = JSON.parse(data);
+        let found = false;
+        for (let user of users) {
+            if (user.name === req.body.name) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            let newId;
+            if (users.length > 0) {
+                newId = users[users.length - 1].id + 1;
+            } else {
+                newId = 1;
+            }
+            let userObject = {id: newId};
+            let token = jwt.sign(userObject, secretKey);
+            let userToSave = {
+                id: newId,
+                name: req.body.name,
+                password: req.body.password
+            };
+            users.push(userToSave);
+            fs.writeFile('users.json', JSON.stringify(users), () => {
+                res.json({
+                    success: true,
+                    token: token
+                });
+            });
+        }
+        else {
+            res.json({
+                success: false,
+                message: 'A user with the specified name already exists'
+            });
+        }
+    });
+}
+
+
 function enterGame(req, res) {
-    console.log("Got enter game message");
+    console.log("Got enter lobby message");
     const userInfo = jwt.decode(req.body.token);
     console.log('Attempting to add room player');
 
@@ -111,7 +222,7 @@ function leaveGame(req, res) {
     }
     if (playerToRemoveIndex >= 0) {
         console.log('Removing player');
-        roomPlayers.splice(playerToRemoveIndex, 1)
+        roomPlayers.splice(playerToRemoveIndex, 1);
         for (const socket of sockets) {
             socket.emit('room-players', roomPlayers);
         }
@@ -131,4 +242,8 @@ function setReady(req, res) {
         token: jwt.sign(object, secretKey)
     };
     res.json(responseObject);
+}
+
+function getRooms(req, res) {
+    res.json(rooms);
 }

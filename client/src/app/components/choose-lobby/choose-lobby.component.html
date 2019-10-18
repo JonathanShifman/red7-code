@@ -1,0 +1,5 @@
+<div id="lobbies-grid">
+  <div class="lobby-wrapper" *ngFor="let lobby of lobbies" (click)="onClick(lobby.id)">
+    {{ lobby.name }}
+  </div>
+</div>

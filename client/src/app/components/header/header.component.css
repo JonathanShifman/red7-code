@@ -1,0 +1,11 @@
+#header-wrapper {
+  width: 100%;
+  background-color: cornflowerblue;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#sign-out-link {
+  cursor: pointer;
+}

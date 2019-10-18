@@ -1,0 +1,4 @@
+<div id="message-wrapper" [ngStyle]="{'width': width + 'px'}" *ngIf="message != null">
+  <div id="message-text">{{ message }}</div>
+  <div id="close-button" (click)="onCloseClicked()">x</div>
+</div>

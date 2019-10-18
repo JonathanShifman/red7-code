@@ -1,0 +1,18 @@
+#message-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px;
+  box-sizing: border-box;
+  background-color: rgba(232, 199, 197, 0.9);
+  border: 1px solid #de7e78;
+  color: #e3463b;
+  border-radius: 6px;
+  font-size: 13px;
+}
+#close-button {
+  font-size: 15px;
+  cursor: pointer;
+  margin-right: 4px;
+}
