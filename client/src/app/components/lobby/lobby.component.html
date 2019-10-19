@@ -2,7 +2,7 @@
   <div id="rooms-grid">
     <div class="room" *ngFor="let room of rooms; index as i" [ngClass]="{'room-full': isRoomTaken(i)}" (click)="roomClicked(room.id)">
       <div class="room-header">Room {{ room['id'] }}</div>
-      <div class="room-footer">{{ room['taken'] + '/' + room['capacity']}}</div>
+      <div class="room-footer">{{ room['players'].length + '/' + room['capacity']}}</div>
     </div>
   </div>
 </div>

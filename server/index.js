@@ -17,6 +17,7 @@ const games = [
 ];
 
 const userMap = {};
+const socketsMap = {};
 const gameMap = {};
 const numOfRooms = 10;
 for (let game of games) {
@@ -28,8 +29,8 @@ for (let game of games) {
     for (let i = 1; i <= numOfRooms; i++) {
         gameMap[game.id].rooms.push({
             'id': i,
-            'taken': 0,
-            'capacity': 2
+            'capacity': 2,
+            'players': []
         });
     }
 }
@@ -43,14 +44,13 @@ fs.readFile('data.json', (err, data) => {
 
 app.use(cors());
 app.use(bodyParser.json());
-app.get('/roomIds/', (req, res) => getRoomIds(req, res));
 app.post('/status/', (req, res) => getStatus(req, res));
 app.post('/login/', (req, res) => login(req, res));
 app.post('/register/', (req, res) => register(req, res));
 app.post('/enter-room/', (req, res) => enterRoom(req, res));
 app.post('/exit-room/', (req, res) => exitRoom(req, res));
-app.post('/enter-lobby/', (req, res) => enterGame(req, res));
-app.post('/leave-lobby/', (req, res) => leaveGame(req, res));
+app.post('/sit-down/', (req, res) => sitDown(req, res));
+app.post('/stand-up/', (req, res) => standUp(req, res));
 
 io.on('connection', function(socket){
     console.log('A user connected');
@@ -60,8 +60,27 @@ io.on('connection', function(socket){
         console.log('A user disconnected');
     });
 
-    socket.on('auth',  storageData => {
-        // console.log(storageData);
+    socket.on('auth',  token => {
+        const userInfo = jwt.decode(token);
+        if (userInfo == null) {
+            console.log('Unauthorized');
+        } else {
+            let userId = userInfo.id.toString();
+            if (userMap[userId] == null) {
+                console.log("User not in map");
+            } else {
+                if (socketsMap[userId] == null) {
+                    socketsMap[userId] = [];
+                }
+                socketsMap[userId].push(socket);
+
+                for (let userId in socketsMap) {
+                    for (let s of socketsMap[userId]) {
+                        s.emit('room-players', []);
+                    }
+                }
+            }
+        }
     });
 
     socket.emit('room-players', roomPlayers);
@@ -211,51 +230,11 @@ function exitRoom(req, res) {
 }
 
 
-function enterGame(req, res) {
-    console.log("Got enter lobby message");
-    const userInfo = jwt.decode(req.body.token);
-    console.log('Attempting to add room player');
+function sitDown(req, res) {
 
-    if (roomPlayers.length >= 4) {
-        console.log('Room is full');
-    } else {
-        let shouldAddPlayer = true;
-        for (let roomPlayer of roomPlayers) {
-            if (roomPlayer.id === userInfo.id) {
-                console.log('The player is already in the room');
-                shouldAddPlayer = false;
-                break;
-            }
-        }
-        if (shouldAddPlayer) {
-            roomPlayers.push(userInfo);
-            for (const socket of sockets) {
-                socket.emit('room-players', roomPlayers);
-            }
-        }
-    }
-    res.json({});
 }
 
-function leaveGame(req, res) {
-    const userInfo = jwt.decode(req.body.token);
-    console.log('Attempting to remove room player');
 
-    let playerToRemoveIndex = -1;
-    for (let index = 0; index < roomPlayers.length; index++) {
-        const roomPlayer = roomPlayers[index];
-        if (roomPlayer.id === userInfo.id) {
-            playerToRemoveIndex = index;
-        }
-    }
-    if (playerToRemoveIndex >= 0) {
-        console.log('Removing player');
-        roomPlayers.splice(playerToRemoveIndex, 1);
-        for (const socket of sockets) {
-            socket.emit('room-players', roomPlayers);
-        }
-    } else {
-        console.log('Player not found');
-    }
-    res.json({});
+function standDown(req, res) {
+
 }
