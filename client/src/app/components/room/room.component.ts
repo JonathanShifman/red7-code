@@ -29,16 +29,19 @@ export class RoomComponent implements OnInit {
   }
 
   changeRoomStatus() {
-    const requestUrlTail = this.hasEnteredGame() ? 'leave-lobby' : 'enter-lobby';
-    const body = localStorage.getItem('red7');
-    console.log(body);
-    console.log('Sending change room status request');
-    this.httpClient.post('http://localhost:5000/' + requestUrlTail + '/', JSON.parse(body))
+    // const requestUrlTail = this.hasEnteredGame() ? 'leave-lobby' : 'enter-lobby';
+    // const body = localStorage.getItem('red7');
+    // console.log(body);
+    // console.log('Sending change room status request');
+    // this.httpClient.post('http://localhost:5000/' + requestUrlTail + '/', JSON.parse(body))
+    //   .subscribe(() => {});
+    this.httpClient.post('http://localhost:5000/sit-down/', this.storageData)
       .subscribe(() => {});
   }
 
   updateRoomPlayers(response) {
-    console.log('Got room players');
+    console.log('Received room players');
+    console.log(response);
     this.roomPlayers = response;
     this.updatePlayerNames();
   }

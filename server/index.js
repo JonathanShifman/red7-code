@@ -35,8 +35,6 @@ for (let game of games) {
     }
 }
 
-const roomPlayers = [];
-const sockets = [];
 let diskData;
 fs.readFile('data.json', (err, data) => {
     diskData = JSON.parse(data);
@@ -54,13 +52,13 @@ app.post('/stand-up/', (req, res) => standUp(req, res));
 
 io.on('connection', function(socket){
     console.log('A user connected');
-    sockets.push(socket);
 
     socket.on('disconnect', function () {
         console.log('A user disconnected');
     });
 
     socket.on('auth',  token => {
+        console.log('Got auth');
         const userInfo = jwt.decode(token);
         if (userInfo == null) {
             console.log('Unauthorized');
@@ -69,21 +67,16 @@ io.on('connection', function(socket){
             if (userMap[userId] == null) {
                 console.log("User not in map");
             } else {
+                let userInfo = userMap[userId];
                 if (socketsMap[userId] == null) {
                     socketsMap[userId] = [];
                 }
                 socketsMap[userId].push(socket);
-
-                for (let userId in socketsMap) {
-                    for (let s of socketsMap[userId]) {
-                        s.emit('room-players', []);
-                    }
-                }
+                emitRoomPlayers(userInfo.gameId, userInfo.roomId);
             }
         }
     });
 
-    socket.emit('room-players', roomPlayers);
 });
 
 const port = 5000;
@@ -231,10 +224,50 @@ function exitRoom(req, res) {
 
 
 function sitDown(req, res) {
+    console.log("Got sit down message");
+    const userInfo = jwt.decode(req.body.token);
+    if (userInfo == null) {
+        console.log('Unauthorized');
+    } else {
+        let userId = userInfo.id.toString();
+        if (userMap[userId] == null) {
+            console.log("User not in map");
+        } else {
+            let userInfo = userMap[userId];
+            let room = gameMap[userInfo.gameId].rooms[userInfo.roomId - 1];
+            let alreadySitting = false;
+            for (let player of room.players) {
+                console.log(player);
+                if(player === userId) {
+                    alreadySitting = true;
+                    break;
+                }
+            }
+
+            if (!alreadySitting && room.players.length < room.capacity) {
+                room.players.push(userId);
+                emitRoomPlayers(userInfo.gameId, userInfo.roomId);
+            }
+        }
+    }
+
+    let status = generateStatus(userInfo);
+    res.json(status);
 
 }
 
 
-function standDown(req, res) {
+function standUp(req, res) {
 
+}
+
+function emitRoomPlayers(gameId, roomId) {
+    let room = gameMap[gameId].rooms[roomId - 1];
+    for (let playerId of room.players) {
+        for (let socket of socketsMap[playerId]) {
+            console.log('Emitting room players');
+            console.log(room.players);
+            socket.emit('room-players', room.players);
+        }
+    }
 }
