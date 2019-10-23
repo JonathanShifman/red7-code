@@ -28,9 +28,10 @@ for (let game of games) {
     };
     for (let i = 1; i <= numOfRooms; i++) {
         gameMap[game.id].rooms.push({
-            'id': i,
-            'capacity': 2,
-            'players': []
+            id: i,
+            capacity: 2,
+            enteredPlayers: [],
+            seatedPlayers: []
         });
     }
 }
@@ -72,6 +73,7 @@ io.on('connection', function(socket){
                     socketsMap[userId] = [];
                 }
                 socketsMap[userId].push(socket);
+                console.log(socketsMap[userId].length);
                 emitRoomPlayers(userInfo.gameId, userInfo.roomId);
             }
         }
@@ -195,6 +197,8 @@ function enterRoom(req, res) {
                 gameId: gameId,
                 roomId: roomId
             };
+            let room = gameMap[gameId].rooms[roomId - 1];
+            room.enteredPlayers.push(userId);
         }
     }
 
@@ -213,8 +217,33 @@ function exitRoom(req, res) {
         if (userMap[userId] == null) {
             console.log("User not in map");
         } else {
+            let gameId = userMap[userId].gameId;
+            let roomId = userMap[userId].roomId;
+            let room = gameMap[gameId].rooms[roomId - 1];
+            let index = 0;
+            let indexToSplice = -1;
+            for (let playerId of room.enteredPlayers) {
+                if (playerId == userId) {
+                    indexToSplice = index;
+                    break;
+                }
+            }
+            if (indexToSplice >= 0) {
+                room.enteredPlayers.splice(indexToSplice, 1);
+            }
+            index = 0;
+            indexToSplice = -1;
+            for (let playerId of room.seatedPlayers) {
+                if (playerId == userId) {
+                    indexToSplice = index;
+                    break;
+                }
+            }
+            if (indexToSplice >= 0) {
+                room.seatedPlayers.splice(indexToSplice, 1);
+                emitRoomPlayers(gameId, roomId);
+            }
             userMap[userId] = null;
-            // TODO: Edit gameMap if necessary
         }
     }
 
@@ -236,16 +265,15 @@ function sitDown(req, res) {
             let userInfo = userMap[userId];
             let room = gameMap[userInfo.gameId].rooms[userInfo.roomId - 1];
             let alreadySitting = false;
-            for (let player of room.players) {
-                console.log(player);
+            for (let player of room.seatedPlayers) {
                 if(player === userId) {
                     alreadySitting = true;
                     break;
                 }
             }
 
-            if (!alreadySitting && room.players.length < room.capacity) {
-                room.players.push(userId);
+            if (!alreadySitting && room.seatedPlayers.length < room.capacity) {
+                room.seatedPlayers.push(userId);
                 emitRoomPlayers(userInfo.gameId, userInfo.roomId);
             }
         }
@@ -258,16 +286,44 @@ function sitDown(req, res) {
 
 
 function standUp(req, res) {
+    console.log("Got stand up message");
+    const userInfo = jwt.decode(req.body.token);
+    if (userInfo == null) {
+        console.log('Unauthorized');
+    } else {
+        let userId = userInfo.id.toString();
+        if (userMap[userId] == null) {
+            console.log("User not in map");
+        } else {
+            let userInfo = userMap[userId];
+            let room = gameMap[userInfo.gameId].rooms[userInfo.roomId - 1];
+            let alreadySitting = false;
+            let index = 0;
+            for (let player of room.seatedPlayers) {
+                if(player === userId) {
+                    alreadySitting = true;
+                    break;
+                }
+                index++;
+            }
 
+            if (alreadySitting) {
+                console.log("Standing up");
+                room.seatedPlayers.splice(index, 1);
+                emitRoomPlayers(userInfo.gameId, userInfo.roomId);
+            }
+        }
+    }
+
+    let status = generateStatus(userInfo);
+    res.json(status);
 }
 
 function emitRoomPlayers(gameId, roomId) {
     let room = gameMap[gameId].rooms[roomId - 1];
-    for (let playerId of room.players) {
+    for (let playerId of room.enteredPlayers) {
         for (let socket of socketsMap[playerId]) {
-            console.log('Emitting room players');
-            console.log(room.players);
-            socket.emit('room-players', room.players);
+            socket.emit('room-players', room.seatedPlayers);
         }
     }
 }
